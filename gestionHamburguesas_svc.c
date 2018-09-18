@@ -3,7 +3,7 @@
  * It was generated using rpcgen.
  */
 
-#include "gestionHamburguesa.h"
+#include "gestionHamburguesas.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <rpc/pmap_clnt.h>
@@ -21,7 +21,6 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
 		nodo_hamburguesa registrarhamburguesasistema_1_arg;
-		char *consultarhamburguesa_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -32,16 +31,22 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		(void) svc_sendreply (transp, (xdrproc_t) xdr_void, (char *)NULL);
 		return;
 
+	case consultarCostosHamburguesa:
+		_xdr_argument = (xdrproc_t) xdr_void;
+		_xdr_result = (xdrproc_t) xdr_nodo_costos_hamburguesa;
+		local = (char *(*)(char *, struct svc_req *)) consultarcostoshamburguesa_1_svc;
+		break;
+
 	case registrarHamburguesaSistema:
 		_xdr_argument = (xdrproc_t) xdr_nodo_hamburguesa;
 		_xdr_result = (xdrproc_t) xdr_bool;
 		local = (char *(*)(char *, struct svc_req *)) registrarhamburguesasistema_1_svc;
 		break;
 
-	case consultarHamburguesa:
-		_xdr_argument = (xdrproc_t) xdr_wrapstring;
-		_xdr_result = (xdrproc_t) xdr_nodo_hamburguesa;
-		local = (char *(*)(char *, struct svc_req *)) consultarhamburguesa_1_svc;
+	case listarHamburguesasSistema:
+		_xdr_argument = (xdrproc_t) xdr_void;
+		_xdr_result = (xdrproc_t) xdr_proxNodoHamburguesa;
+		local = (char *(*)(char *, struct svc_req *)) listarhamburguesassistema_1_svc;
 		break;
 
 	default:
