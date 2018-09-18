@@ -5,9 +5,10 @@
  */
 
 #include "gestionHamburguesas.h"
+proxNodoHamburguesa cabeza = NULL, sigHamburguesa;
+proxNodoHamburguesa nuevaHamburguesa;
 
-nodo_costos_hamburguesa *
-consultarcostoshamburguesa_1_svc(void *argp, struct svc_req *rqstp)
+nodo_costos_hamburguesa * consultarcostoshamburguesa_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static nodo_costos_hamburguesa  result;
 
@@ -23,21 +24,33 @@ registrarhamburguesasistema_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 {
 	static bool_t  result;
 
-	/*
-	 * insert server code here
-	 */
+	printf("Nombre: %s \n", (*argp).nombre);
+	printf("Cantidad Ingredientes: %s \n", (*argp).cantidadIngredientesExtra);
+	printf("Tipo: %s \n", (*argp).tipo);
+
+	hamburguesaHamburguesa = (proxNodoHamburguesa) malloc (sizeof (nodo_hamburguesa) );
+	
+	strcpy(nuevaHamburguesa->nombre,(*argp).nombre);
+	if (cabeza==NULL)
+	{
+		cabeza = nuevaHamburguesa;
+		sigHamburguesa = cabeza;
+	}
+	else
+	{
+		sigHamburguesa->nodoSiguiente = nuevaHamburguesa;
+		sigHamburguesa=nuevaHamburguesa;
+	}
+	sigHamburguesa->nodoSiguiente=NULL;
+	result=TRUE;
 
 	return &result;
 }
 
-proxNodoHamburguesa *
-listarhamburguesassistema_1_svc(void *argp, struct svc_req *rqstp)
+proxNodoHamburguesa * listarhamburguesassistema_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static proxNodoHamburguesa  result;
-
-	/*
-	 * insert server code here
-	 */
+	result = cabeza;
 
 	return &result;
 }
