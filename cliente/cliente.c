@@ -23,7 +23,7 @@ nodo_hamburguesa crearHamburguesa(){
 	do{
 		printf("\n Digite la cantidad de ingredientes extra: ");
 		scanf("%d", &cantidad);
-	}while(cantidad<0)
+	}while(cantidad<0);
 	objHamburguesa.cantidadIngredientesExtra=cantidad;	
 	fflush(stdin);
 	int varOpcion;
@@ -39,36 +39,14 @@ nodo_hamburguesa crearHamburguesa(){
 	} while (varOpcion<1 || varOpcion>3);	
 	return objHamburguesa;	
 }
-listarC(nodo_costos_hamburguesa  *result_1){
+void listarC(nodo_costos_hamburguesa  *result_1){
 	printf("\n Mostrando listado de Costos ");
-	printf("\n 1. ",(result_1).costoHamburguesaPequenia);
-	printf("\n 2. ",(result_1).costoHamburguesaMediana);
-	printf("\n 3. ",(result_1).costoHamburguesaGrande);
-	printf("\n 4. ",(result_1).costoIngredientesExtra);
+	printf("\n 1. ",(*result_1).costoHamburguesaPequenia);
+	printf("\n 2. ",(*result_1).costoHamburguesaMediana);
+	printf("\n 3. ",(*result_1).costoHamburguesaGrande);
+	printf("\n 4. ",(*result_1).costoIngredientesExtra);
 }
-listarH(proxNodoHamburguesa *result_3){
-	int i=0;
-	//proxNodoHamburguesa auxiliar=result_3;
-	printf("\n Mostrando listado de hamburguesas ");
-	while(result_3!=NULL){
-		if (result_3 == (nodo_hamburguesa *) NULL) {
-					clnt_perror (clnt, "call failed");
-				}
-		else if((*result_3).cantidadIngredientesExtra==-1)
-				{
-					printf("\n	Lista de pedidos Vacio \n");
-				}
-		else
-				{
-					printf("\n	Nombre de la hamburguesa: %s \n",(*result_3).nombre);
-					printf("	Cantidad de Ingredientes de la hamburguesa: %i \n",(*result_3).cantidadIngredientesExtra);
-					printf("	Tipo de la hamburguesa: %s \n",(*result_3).tipo);
-					result_3=(result_3).nodoSiguiente;
-					i++;
-				}
-	
-	}
-}
+
 void
 gestion_hamburguesa_1(char *host)
 {
@@ -115,7 +93,28 @@ int varOpcion;
 			break;
 			case 3:
 				result_3 = listarhamburguesassistema_1((void*)&listarhamburguesassistema_1_arg, clnt);
-				listarH(*result_3);
+				int i=0;
+				//proxNodoHamburguesa auxiliar=result_3;
+				printf("\n Mostrando listado de hamburguesas ");
+				while(result_3!=NULL){
+					if (result_3 == (nodo_hamburguesa *) NULL) {
+								clnt_perror (clnt, "call failed");
+							}
+					else if((*result_3).cantidadIngredientesExtra==-1)
+							{
+								printf("\n	Lista de pedidos Vacio \n");
+							}
+					else
+							{
+								printf("\n	Nombre de la hamburguesa: %s \n",(*result_3).nombre);
+								printf("	Cantidad de Ingredientes de la hamburguesa: %i \n"
+(*result_3).cantidadIngredientesExtra);
+								printf("	Tipo de la hamburguesa: %s \n",(*result_3).tipo);
+								result_3=(*result_3).nodoSiguiente;
+								i++;
+							}
+	
+				}
 			break;
 		}
 	}while (varOpcion!=0 || varOpcion<0 || varOpcion>3);

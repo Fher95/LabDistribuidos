@@ -3,16 +3,16 @@
 
 # Parameters
 
-CLIENT = gestionHamburguesas_client
-SERVER = gestionHamburguesas_server
+CLIENT = cliente
+SERVER = 
 
-SOURCES_CLNT.c = 
-SOURCES_CLNT.h = 
+SOURCES_CLNT.c = cliente.c
+SOURCES_CLNT.h = gestionHamburguesas.h
 SOURCES_SVC.c = 
 SOURCES_SVC.h = 
 SOURCES.x = gestionHamburguesas.x
 
-TARGETS_SVC.c =     gestionHamburguesas_xdr.c 
+TARGETS_SVC.c =     
 TARGETS_CLNT.c = gestionHamburguesas_clnt.c   gestionHamburguesas_xdr.c 
 TARGETS = gestionHamburguesas.h gestionHamburguesas_xdr.c gestionHamburguesas_clnt.c      
 
