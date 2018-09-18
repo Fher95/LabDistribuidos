@@ -15,30 +15,28 @@ nodo_costos_hamburguesa * consultarcostoshamburguesa_1_svc(void *argp, struct sv
 
 	FILE *archivo;
 	char lineaLeida[100];
-	char vec[4][100];
 	archivo = fopen("costoshamburguesa.txt","r");
-
+	printf("\n Ejecutando Consulta de Precios. \n");
 	if (archivo == NULL)
 	{
 		printf("Erro al abrir el archivo");
 	} 		
 	else
 	{
-		printf("\nEl contenido del archivo de prueba es \n\n");
-		int i=0;
-		while (feof(archivo) == 0)
-		{
 			fgets(lineaLeida,100,archivo);
-			strcpy(vec[i],lineaLeida);
-			i++;
-			/*printf("%s \n",lineaLeida);*/
-		}
-		fclose(archivo);
+
+
+			result.costoHamburguesaPequenia = atof(lineaLeida);
+			fgets(lineaLeida,100,archivo);
+			result.costoHamburguesaMediana = atof(lineaLeida);
+			fgets(lineaLeida,100,archivo);
+			result.costoHamburguesaGrande = atof(lineaLeida);
+			fgets(lineaLeida,100,archivo);
+			result.costoIngredientesExtra = atof(lineaLeida);
+	
 	}
-	result.costoHamburguesaPequenia = atof(vec[0]);
-	result.costoHamburguesaMediana = atof(vec[1]);
-	result.costoHamburguesaGrande = atof(vec[2]);
-	result.costoIngredientesExtra = atof(vec[3]);
+	
+	
 	return &result;
 }
 
@@ -46,14 +44,17 @@ bool_t *
 registrarhamburguesasistema_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 {
 	static bool_t  result;
+	printf("\n Ejecutando Registro de Hamburguesas. \n");
+	printf("	Nombre: %s \n", (*argp).nombre);
+	printf("	Cantidad Ingredientes: %d \n", (*argp).cantidadIngredientesExtra);
+	printf("	Tipo: %s \n", (*argp).tipo);
 
-	printf("Nombre: %s \n", (*argp).nombre);
-	printf("Cantidad Ingredientes: %s \n", (*argp).cantidadIngredientesExtra);
-	printf("Tipo: %s \n", (*argp).tipo);
-
-	hamburguesaHamburguesa = (proxNodoHamburguesa) malloc (sizeof (nodo_hamburguesa) );
+	nuevaHamburguesa = (proxNodoHamburguesa) malloc (sizeof (nodo_hamburguesa) );
 	
 	strcpy(nuevaHamburguesa->nombre,(*argp).nombre);
+	nuevaHamburguesa->cantidadIngredientesExtra = (*argp).cantidadIngredientesExtra;
+	strcpy(nuevaHamburguesa->tipo,(*argp).tipo);
+
 	if (cabeza==NULL)
 	{
 		cabeza = nuevaHamburguesa;
@@ -72,6 +73,7 @@ registrarhamburguesasistema_1_svc(nodo_hamburguesa *argp, struct svc_req *rqstp)
 
 proxNodoHamburguesa * listarhamburguesassistema_1_svc(void *argp, struct svc_req *rqstp)
 {
+	printf("\n Ejecutando Listar Hamburguesas. \n");
 	static proxNodoHamburguesa  result;
 	result = cabeza;
 
