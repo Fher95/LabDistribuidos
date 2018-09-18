@@ -3,7 +3,8 @@
  * These are only templates and you can use them
  * as a guideline for developing your own functions.
  */
-
+#include <stdlib.h>
+#include <string.h>
 #include "gestionHamburguesas.h"
 proxNodoHamburguesa cabeza = NULL, sigHamburguesa;
 proxNodoHamburguesa nuevaHamburguesa;
@@ -12,10 +13,32 @@ nodo_costos_hamburguesa * consultarcostoshamburguesa_1_svc(void *argp, struct sv
 {
 	static nodo_costos_hamburguesa  result;
 
-	/*
-	 * insert server code here
-	 */
+	FILE *archivo;
+	char lineaLeida[100];
+	char vec[4][100];
+	archivo = fopen("costoshamburguesa.txt","r");
 
+	if (archivo == NULL)
+	{
+		printf("Erro al abrir el archivo");
+	} 		
+	else
+	{
+		printf("\nEl contenido del archivo de prueba es \n\n");
+		int i=0;
+		while (feof(archivo) == 0)
+		{
+			fgets(lineaLeida,100,archivo);
+			strcpy(vec[i],lineaLeida);
+			i++;
+			/*printf("%s \n",lineaLeida);*/
+		}
+		fclose(archivo);
+	}
+	result.costoHamburguesaPequenia = atof(vec[0]);
+	result.costoHamburguesaMediana = atof(vec[1]);
+	result.costoHamburguesaGrande = atof(vec[2]);
+	result.costoIngredientesExtra = atof(vec[3]);
 	return &result;
 }
 
