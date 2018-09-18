@@ -5,8 +5,70 @@
  */
 
 #include "gestionHamburguesas.h"
+int desplegarMenu(){
 
-
+	printf("\n=================  MENÚ  =================");
+	printf("\n	1. Consultar costos	");
+	printf("\n	2. Registrar hamburguesa	");
+	printf("\n	3. Listar hamburguesa	");
+	printf("\n	0. Salir			");
+	printf("\n=================        =================");
+	printf("\nDigite opcion: ");
+}
+nodo_hamburguesa crearHamburguesa(){
+	int cantidad=0;
+	nodo_hamburguesa objHamburguesa;
+	printf("\n Digite el nombre de la hamburguesa: ");
+	scanf("%s", objHamburguesa.nombre);
+	do{
+		printf("\n Digite la cantidad de ingredientes extra: ");
+		scanf("%d", &cantidad);
+	}while(cantidad<0)
+	objHamburguesa.cantidadIngredientesExtra=cantidad;	
+	fflush(stdin);
+	int varOpcion;
+	do{
+		printf("\n Seleccione el tipo de hamburguesa 1 para pequeña, 2 para mediana, 3 para grande: ");
+		scanf("%i", &varOpcion);
+		switch(varOpcion)
+		{
+			case 1: strcpy(objHamburguesa.tipo,"Pequenia"); break; 
+			case 2: strcpy(objHamburguesa.tipo,"Mediana"); break;
+			case 3: strcpy(objHamburguesa.tipo,"Grande"); break;
+		}
+	} while (varOpcion<1 || varOpcion>3);	
+	return objHamburguesa;	
+}
+listarC(nodo_costos_hamburguesa  *result_1){
+	printf("\n Mostrando listado de Costos ");
+	printf("\n 1. ",(result_1).costoHamburguesaPequenia);
+	printf("\n 2. ",(result_1).costoHamburguesaMediana);
+	printf("\n 3. ",(result_1).costoHamburguesaGrande);
+	printf("\n 4. ",(result_1).costoIngredientesExtra);
+}
+listarH(proxNodoHamburguesa *result_3){
+	int i=0;
+	//proxNodoHamburguesa auxiliar=result_3;
+	printf("\n Mostrando listado de hamburguesas ");
+	while(result_3!=NULL){
+		if (result_3 == (nodo_hamburguesa *) NULL) {
+					clnt_perror (clnt, "call failed");
+				}
+		else if((*result_3).cantidadIngredientesExtra==-1)
+				{
+					printf("\n	Lista de pedidos Vacio \n");
+				}
+		else
+				{
+					printf("\n	Nombre de la hamburguesa: %s \n",(*result_3).nombre);
+					printf("	Cantidad de Ingredientes de la hamburguesa: %i \n",(*result_3).cantidadIngredientesExtra);
+					printf("	Tipo de la hamburguesa: %s \n",(*result_3).tipo);
+					result_3=(result_3).nodoSiguiente;
+					i++;
+				}
+	
+	}
+}
 void
 gestion_hamburguesa_1(char *host)
 {
@@ -25,19 +87,42 @@ gestion_hamburguesa_1(char *host)
 		exit (1);
 	}
 #endif	/* DEBUG */
+int varOpcion;
+	do {
+		
+		desplegarMenu();
+		scanf("%i",&varOpcion);
+		switch(varOpcion)
+		{
+			case 1:
+				result_1 = consultarcostoshamburguesa_1((void*)&consultarcostoshamburguesa_1_arg, clnt);
+				listarC(*result_1);
+			break;
+			case 2:
+				registrarhamburguesasistema_1_arg = crearHamburguesa();
+				result_2 = registrarhamburguesasistema_1(&registrarhamburguesasistema_1_arg, clnt);
+				if(*result_2 == TRUE)
+				{
+					printf("\n	Hamburguesa registrada exitosamente\n");
+				}
+				else if (*result_2 == FALSE){
+					printf("\n 	Limite de hamburguesas alcanzado\n");
+				} 
+				else if(result_2 == (bool_t *) NULL){
+					clnt_perror (clnt, "call failed");
+				}
+				break;
+			break;
+			case 3:
+				result_3 = listarhamburguesassistema_1((void*)&listarhamburguesassistema_1_arg, clnt);
+				listarH(*result_3);
+			break;
+		}
+	}while (varOpcion!=0 || varOpcion<0 || varOpcion>3);
 
-	result_1 = consultarcostoshamburguesa_1((void*)&consultarcostoshamburguesa_1_arg, clnt);
-	if (result_1 == (nodo_costos_hamburguesa *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_2 = registrarhamburguesasistema_1(&registrarhamburguesasistema_1_arg, clnt);
-	if (result_2 == (bool_t *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_3 = listarhamburguesassistema_1((void*)&listarhamburguesassistema_1_arg, clnt);
-	if (result_3 == (proxNodoHamburguesa *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
+	
+	
+
 #ifndef	DEBUG
 	clnt_destroy (clnt);
 #endif	 /* DEBUG */
