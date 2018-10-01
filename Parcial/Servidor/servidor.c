@@ -121,35 +121,75 @@ float calcularCostoHamburguesa(char *tipo, int cantIngredientes){
 	return result;
 }
 
+bool_t hamburguesaRepetida(char parNombre[30]){
+
+	bool_t respuesta = FALSE;
+	proxNodoHamburguesa * hamburguesaActual;
+	hamburguesaActual = &cabeza;
+	while (*(hamburguesaActual)!=NULL){
+		if (strcmp((*hamburguesaActual)->nombre,parNombre)==0){
+			respuesta = TRUE;
+			break;
+		}
+		(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;
+	}
+	return respuesta;	
+}
+
 bool_t *
 comprarhamburguesasistema_1_svc(nodo_hamburguesa_factura *argp, struct svc_req *rqstp)
 {
 	static bool_t  result;
+	result = FALSE;
+	if (hamburguesaRepetida((*argp).nombre)== FALSE){
 
-	printf("\n Ejecutando Compra de Hamburguesas. \n");
-	printf("	Nombre: %s \n", (*argp).nombre);
-	printf("	Cantidad Ingredientes: %d \n", (*argp).cantidadIngredientesExtra);
-	printf("	Tipo: %s \n", (*argp).tipo);
+		printf("\n Ejecutando Compra de Hamburguesas. \n");
+		printf("	Nombre: %s \n", (*argp).nombre);
+		printf("	Cantidad Ingredientes: %d \n", (*argp).cantidadIngredientesExtra);
+		printf("	Tipo: %s \n", (*argp).tipo);
 
-	nuevaHamburguesa = (proxNodoHamburguesa) malloc (sizeof (nodo_hamburguesa_factura) );
+		nuevaHamburguesa = (proxNodoHamburguesa) malloc (sizeof (nodo_hamburguesa_factura) );
 	
-	strcpy(nuevaHamburguesa->nombre,(*argp).nombre);
-	nuevaHamburguesa->cantidadIngredientesExtra = (*argp).cantidadIngredientesExtra;
-	strcpy(nuevaHamburguesa->tipo,(*argp).tipo);
-	nuevaHamburguesa->costo = calcularCostoHamburguesa(nuevaHamburguesa->tipo,nuevaHamburguesa->cantidadIngredientesExtra);
+		strcpy(nuevaHamburguesa->nombre,(*argp).nombre);
+		nuevaHamburguesa->cantidadIngredientesExtra = (*argp).cantidadIngredientesExtra;
+		strcpy(nuevaHamburguesa->tipo,(*argp).tipo);
+		nuevaHamburguesa->costo = calcularCostoHamburguesa(nuevaHamburguesa->tipo,nuevaHamburguesa->cantidadIngredientesExtra);
 
-	if (cabeza==NULL)
-	{
-		cabeza = nuevaHamburguesa;
-		sigHamburguesa = cabeza;
+		if (cabeza==NULL)
+		{
+			cabeza = nuevaHamburguesa;
+			sigHamburguesa = cabeza;
+		}
+		else
+		{
+			sigHamburguesa->nodoSiguiente = nuevaHamburguesa;
+			sigHamburguesa=nuevaHamburguesa;
+		}
+		sigHamburguesa->nodoSiguiente=NULL;
+		result=TRUE;
+
 	}
-	else
-	{
-		sigHamburguesa->nodoSiguiente = nuevaHamburguesa;
-		sigHamburguesa=nuevaHamburguesa;
+
+	return &result;
+}
+
+nodo_hamburguesa *
+obtenerhamburguesa_1_svc(char **argp, struct svc_req *rqstp)
+{
+	static nodo_hamburguesa  result;
+
+	proxNodoHamburguesa * hamburguesaActual;
+	hamburguesaActual = &cabeza;
+	while (*(hamburguesaActual)!=NULL){
+		if (strcmp((*hamburguesaActual)->nombre,*argp)==0){
+			strcmp(result.nombre,(*hamburguesaActual)->nombre);
+			result.cantidadIngredientesExtra = (*hamburguesaActual)->cantidadIngredientesExtra;
+			strcmp(result.tipo,(*hamburguesaActual)->tipo);
+			result.idCliente = (*hamburguesaActual)->idCliente;
+			break;
+		}
+		(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;
 	}
-	sigHamburguesa->nodoSiguiente=NULL;
-	result=TRUE;
 
 	return &result;
 }
@@ -167,6 +207,7 @@ modificarcompra_1_svc(nodo_datos_hamburguesa_modificada *argp, struct svc_req *r
 			strcpy((*hamburguesaActual)->nombre,(*argp).varHamburguesa.nombre);
 			(*hamburguesaActual)->cantidadIngredientesExtra = (*argp).varHamburguesa.cantidadIngredientesExtra;
 			strcpy((*hamburguesaActual)->tipo,(*argp).varHamburguesa.tipo);
+			(*hamburguesaActual)->costo = calcularCostoHamburguesa((*hamburguesaActual)->tipo,(*hamburguesaActual)->cantidadIngredientesExtra);
 			result = TRUE;	
 			break;			
 		}
@@ -247,11 +288,47 @@ proxNodoHamburguesa listarHamburguesasCliente(int parId){
 
 
 nodo_factura *
-mostrarfactura_1_svc(void *argp, struct svc_req *rqstp)
+mostrarfactura_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static nodo_factura  result;
-
-		
+	int numGrandes=0, numMedianas=0, numPequenias=0;
+	float costoSinIva=0,iva=0,costoTotal=0;
+	result.listaHamburguesas = listarHamburguesasCliente(*argp);
+	proxNodoHamburguesa * hamburguesaActual;
+	hamburguesaActual = &result.listaHamburguesas;
+	while (*(hamburguesaActual)!=NULL){
+		if (strcmp((*hamburguesaActual)->tipo,"Pequenia")==0){
+			numPequenias++;
+		}
+		if (strcmp((*hamburguesaActual)->tipo,"Mediana")==0){
+			numMedianas++;
+		}
+		if (strcmp((*hamburguesaActual)->tipo,"Grande")==0){
+			numGrandes++;
+		}
+		costoSinIva+=(*hamburguesaActual)->costo;	
+		(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;	
+	}
+	int cantHamburguesas = numGrandes+numMedianas+numPequenias;
+	if (cantHamburguesas >=1 && cantHamburguesas <=3){
+		iva=costoSinIva*0.05;
+	}
+	else if (cantHamburguesas >=4 && cantHamburguesas <=7){
+		iva=costoSinIva*0.08;
+	}
+	else if (cantHamburguesas >=8 && costoSinIva == 120000){
+		iva=costoSinIva*0.18;
+	}
+	else if (cantHamburguesas >=8 ){
+		iva=costoSinIva*0.15;
+	}
+	
+	result.costoIva = iva;
+	result.costo_total = costoSinIva+iva;
+	strcpy(result.id_factura,"factura_");
+	char varNum[4]; sprintf(varNum,"%i",*argp);
+	strcat(result.id_factura,varNum);
+	result.idCliente = *argp;
 
 	return &result;
 }
@@ -269,13 +346,11 @@ pagarfactura_1_svc(char *argp, struct svc_req *rqstp)
 }
 
 proxNodoHamburguesa *
-listarhamburguesassistema_1_svc(void *argp, struct svc_req *rqstp)
+listarhamburguesassistema_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static proxNodoHamburguesa  result;
 
-	/*
-	 * insert server code here
-	 */
+	result = listarHamburguesasCliente(*argp);
 
 	return &result;
 }

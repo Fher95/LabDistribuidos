@@ -3,6 +3,7 @@
 const MAXNOM = 30;
 const MAXTIPO = 20;
 typedef struct nodo_hamburguesa_factura *proxNodoHamburguesa;
+typedef struct nodo_factura *proxNodoFactura;
 
 /*Declaracion de la estructura que permite almacenar los datos de una hamburguesa*/
 
@@ -37,8 +38,10 @@ struct nodo_costos_hamburguesa{
 };
 
 struct nodo_factura{
+	int idCliente;
 	char id_factura[MAXNOM];
 	proxNodoHamburguesa listaHamburguesas;
+	proxNodoFactura nodoFacturaSiguiente;
 	int cantidadHamburguesasPequenias;
 	int cantidadHamburguesasMedianas;
 	int cantidadHamburguesasGrandes;
@@ -64,7 +67,7 @@ program gestion_hamburguesa{
 		bool modificarCompra(nodo_datos_hamburguesa_modificada parHamburguesa)=6;
 		bool eliminaraHamburguesa(string nombreHamburguesa)=7;
 		nodo_factura mostrarFactura(int idCliente)=8;
-		bool pagarFactura(char tipoPago, int idCliente)=9;
-		proxNodoHamburguesa listarHamburguesasSistema(void)=10;		
+		bool pagarFactura(char tipoPago)=9;
+		proxNodoHamburguesa listarHamburguesasSistema(int idCliente)=10;		
 	}=1;
 }=0x20000001;
