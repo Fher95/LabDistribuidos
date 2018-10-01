@@ -43,6 +43,35 @@ consultardatosempresa_1_svc(void *argp, struct svc_req *rqstp)
 	return &result;
 }
 
+nodo_costos_hamburguesa obtenerCostos(){
+
+	nodo_costos_hamburguesa  result;
+	FILE *archivo;
+	char lineaLeida[100];
+	archivo = fopen("costoshamburguesa.txt","r");
+	printf("\n Ejecutando Consulta de Precios. \n");
+	if (archivo == NULL)
+	{
+		printf("Erro al abrir el archivo");
+	} 		
+	else
+	{
+			fgets(lineaLeida,100,archivo);
+
+
+			result.costoHamburguesaPequenia = atof(lineaLeida);
+			fgets(lineaLeida,100,archivo);
+			result.costoHamburguesaMediana = atof(lineaLeida);
+			fgets(lineaLeida,100,archivo);
+			result.costoHamburguesaGrande = atof(lineaLeida);
+			fgets(lineaLeida,100,archivo);
+			result.costoIngredientesExtra = atof(lineaLeida);
+	
+	}
+
+	return result;
+}
+
 nodo_costos_hamburguesa *
 consultarcostoshamburguesa_1_svc(void *argp, struct svc_req *rqstp)
 {
@@ -71,7 +100,25 @@ consultarcostoshamburguesa_1_svc(void *argp, struct svc_req *rqstp)
 	
 	}
 
-	return &result;
+	return &result;	
+}
+
+float calcularCostoHamburguesa(char *tipo, int cantIngredientes){
+	float result = 0;
+	float valor=0;
+	nodo_costos_hamburguesa costos = obtenerCostos();
+	if (strcmp(tipo,"Pequenia")==0){
+		valor = costos.costoHamburguesaPequenia;		
+	}
+	if (strcmp(tipo,"Mediana")==0){
+		valor = costos.costoHamburguesaMediana;		
+	}
+	if (strcmp(tipo,"Grande")==0){
+		valor = costos.costoHamburguesaGrande;		
+	}
+	float valExtra = costos.costoIngredientesExtra*cantIngredientes;
+	result = valor+valExtra;
+	return result;
 }
 
 bool_t *
@@ -89,6 +136,7 @@ comprarhamburguesasistema_1_svc(nodo_hamburguesa_factura *argp, struct svc_req *
 	strcpy(nuevaHamburguesa->nombre,(*argp).nombre);
 	nuevaHamburguesa->cantidadIngredientesExtra = (*argp).cantidadIngredientesExtra;
 	strcpy(nuevaHamburguesa->tipo,(*argp).tipo);
+	nuevaHamburguesa->costo = calcularCostoHamburguesa(nuevaHamburguesa->tipo,nuevaHamburguesa->cantidadIngredientesExtra);
 
 	if (cabeza==NULL)
 	{
@@ -159,14 +207,51 @@ eliminarahamburguesa_1_svc(char **argp, struct svc_req *rqstp)
 	return &result;
 }
 
+
+proxNodoHamburguesa listarHamburguesasCliente(int parId){
+
+	proxNodoHamburguesa nuevaCabeza = NULL, varSigHamburguesa;
+
+	proxNodoHamburguesa hamburguesaNueva;
+	proxNodoHamburguesa *hamburguesaActual;
+	hamburguesaActual=&cabeza;
+
+	while (*(hamburguesaActual)!=NULL){
+		if ((*hamburguesaActual)->idCliente==parId){
+
+			hamburguesaNueva = (proxNodoHamburguesa) malloc (sizeof (nodo_hamburguesa_factura) );	
+			strcpy(hamburguesaNueva->nombre,(*hamburguesaActual)->nombre);
+			hamburguesaNueva->cantidadIngredientesExtra = (*hamburguesaActual)->cantidadIngredientesExtra;
+			strcpy(hamburguesaNueva->tipo,(*hamburguesaActual)->tipo);
+			hamburguesaNueva->costo = (*hamburguesaActual)->costo;
+			hamburguesaNueva->idCliente = (*hamburguesaActual)->idCliente;
+			if (nuevaCabeza==NULL)
+			{
+				nuevaCabeza = hamburguesaNueva;
+				varSigHamburguesa = nuevaCabeza;
+			}
+			else
+			{
+				varSigHamburguesa->nodoSiguiente = hamburguesaNueva;
+				varSigHamburguesa=hamburguesaNueva;
+			}
+			sigHamburguesa->nodoSiguiente=NULL;
+		
+		}
+		(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;		
+	}
+	return nuevaCabeza;
+	
+}
+
+
+
 nodo_factura *
 mostrarfactura_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static nodo_factura  result;
 
-	/*
-	 * insert server code here
-	 */
+		
 
 	return &result;
 }
