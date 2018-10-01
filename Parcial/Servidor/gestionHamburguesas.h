@@ -18,6 +18,8 @@ extern "C" {
 
 typedef struct nodo_hamburguesa_factura *proxNodoHamburguesa;
 
+typedef struct nodo_factura *proxNodoFactura;
+
 struct nodo_hamburguesa {
 	char nombre[MAXNOM];
 	int cantidadIngredientesExtra;
@@ -51,8 +53,10 @@ struct nodo_costos_hamburguesa {
 typedef struct nodo_costos_hamburguesa nodo_costos_hamburguesa;
 
 struct nodo_factura {
+	int idCliente;
 	char id_factura[MAXNOM];
 	proxNodoHamburguesa listaHamburguesas;
+	proxNodoFactura nodoFacturaSiguiente;
 	int cantidadHamburguesasPequenias;
 	int cantidadHamburguesasMedianas;
 	int cantidadHamburguesasGrandes;
@@ -84,21 +88,24 @@ extern  nodo_costos_hamburguesa * consultarcostoshamburguesa_1_svc(void *, struc
 #define comprarHamburguesaSistema 4
 extern  bool_t * comprarhamburguesasistema_1(nodo_hamburguesa_factura *, CLIENT *);
 extern  bool_t * comprarhamburguesasistema_1_svc(nodo_hamburguesa_factura *, struct svc_req *);
-#define modificarCompra 5
+#define obtenerHamburguesa 5
+extern  nodo_hamburguesa * obtenerhamburguesa_1(char **, CLIENT *);
+extern  nodo_hamburguesa * obtenerhamburguesa_1_svc(char **, struct svc_req *);
+#define modificarCompra 6
 extern  bool_t * modificarcompra_1(nodo_datos_hamburguesa_modificada *, CLIENT *);
 extern  bool_t * modificarcompra_1_svc(nodo_datos_hamburguesa_modificada *, struct svc_req *);
-#define eliminaraHamburguesa 6
+#define eliminaraHamburguesa 7
 extern  bool_t * eliminarahamburguesa_1(char **, CLIENT *);
 extern  bool_t * eliminarahamburguesa_1_svc(char **, struct svc_req *);
-#define mostrarFactura 7
-extern  nodo_factura * mostrarfactura_1(void *, CLIENT *);
-extern  nodo_factura * mostrarfactura_1_svc(void *, struct svc_req *);
-#define pagarFactura 8
+#define mostrarFactura 8
+extern  nodo_factura * mostrarfactura_1(int *, CLIENT *);
+extern  nodo_factura * mostrarfactura_1_svc(int *, struct svc_req *);
+#define pagarFactura 9
 extern  bool_t * pagarfactura_1(char *, CLIENT *);
 extern  bool_t * pagarfactura_1_svc(char *, struct svc_req *);
-#define listarHamburguesasSistema 9
-extern  proxNodoHamburguesa * listarhamburguesassistema_1(void *, CLIENT *);
-extern  proxNodoHamburguesa * listarhamburguesassistema_1_svc(void *, struct svc_req *);
+#define listarHamburguesasSistema 10
+extern  proxNodoHamburguesa * listarhamburguesassistema_1(int *, CLIENT *);
+extern  proxNodoHamburguesa * listarhamburguesassistema_1_svc(int *, struct svc_req *);
 extern int gestion_hamburguesa_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #else /* K&R C */
@@ -114,19 +121,22 @@ extern  nodo_costos_hamburguesa * consultarcostoshamburguesa_1_svc();
 #define comprarHamburguesaSistema 4
 extern  bool_t * comprarhamburguesasistema_1();
 extern  bool_t * comprarhamburguesasistema_1_svc();
-#define modificarCompra 5
+#define obtenerHamburguesa 5
+extern  nodo_hamburguesa * obtenerhamburguesa_1();
+extern  nodo_hamburguesa * obtenerhamburguesa_1_svc();
+#define modificarCompra 6
 extern  bool_t * modificarcompra_1();
 extern  bool_t * modificarcompra_1_svc();
-#define eliminaraHamburguesa 6
+#define eliminaraHamburguesa 7
 extern  bool_t * eliminarahamburguesa_1();
 extern  bool_t * eliminarahamburguesa_1_svc();
-#define mostrarFactura 7
+#define mostrarFactura 8
 extern  nodo_factura * mostrarfactura_1();
 extern  nodo_factura * mostrarfactura_1_svc();
-#define pagarFactura 8
+#define pagarFactura 9
 extern  bool_t * pagarfactura_1();
 extern  bool_t * pagarfactura_1_svc();
-#define listarHamburguesasSistema 9
+#define listarHamburguesasSistema 10
 extern  proxNodoHamburguesa * listarhamburguesassistema_1();
 extern  proxNodoHamburguesa * listarhamburguesassistema_1_svc();
 extern int gestion_hamburguesa_1_freeresult ();
@@ -136,6 +146,7 @@ extern int gestion_hamburguesa_1_freeresult ();
 
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_proxNodoHamburguesa (XDR *, proxNodoHamburguesa*);
+extern  bool_t xdr_proxNodoFactura (XDR *, proxNodoFactura*);
 extern  bool_t xdr_nodo_hamburguesa (XDR *, nodo_hamburguesa*);
 extern  bool_t xdr_nodo_hamburguesa_factura (XDR *, nodo_hamburguesa_factura*);
 extern  bool_t xdr_nodo_datos_empresa (XDR *, nodo_datos_empresa*);
@@ -145,6 +156,7 @@ extern  bool_t xdr_nodo_datos_hamburguesa_modificada (XDR *, nodo_datos_hamburgu
 
 #else /* K&R C */
 extern bool_t xdr_proxNodoHamburguesa ();
+extern bool_t xdr_proxNodoFactura ();
 extern bool_t xdr_nodo_hamburguesa ();
 extern bool_t xdr_nodo_hamburguesa_factura ();
 extern bool_t xdr_nodo_datos_empresa ();

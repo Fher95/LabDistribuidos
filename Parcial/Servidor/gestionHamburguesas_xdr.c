@@ -16,6 +16,16 @@ xdr_proxNodoHamburguesa (XDR *xdrs, proxNodoHamburguesa *objp)
 }
 
 bool_t
+xdr_proxNodoFactura (XDR *xdrs, proxNodoFactura *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_pointer (xdrs, (char **)objp, sizeof (struct nodo_factura), (xdrproc_t) xdr_nodo_factura))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_nodo_hamburguesa (XDR *xdrs, nodo_hamburguesa *objp)
 {
 	register int32_t *buf;
@@ -95,10 +105,14 @@ xdr_nodo_factura (XDR *xdrs, nodo_factura *objp)
 	int i;
 
 	if (xdrs->x_op == XDR_ENCODE) {
+		 if (!xdr_int (xdrs, &objp->idCliente))
+			 return FALSE;
 		 if (!xdr_vector (xdrs, (char *)objp->id_factura, MAXNOM,
 			sizeof (char), (xdrproc_t) xdr_char))
 			 return FALSE;
 		 if (!xdr_proxNodoHamburguesa (xdrs, &objp->listaHamburguesas))
+			 return FALSE;
+		 if (!xdr_proxNodoFactura (xdrs, &objp->nodoFacturaSiguiente))
 			 return FALSE;
 		buf = XDR_INLINE (xdrs, 3 * BYTES_PER_XDR_UNIT);
 		if (buf == NULL) {
@@ -122,10 +136,14 @@ xdr_nodo_factura (XDR *xdrs, nodo_factura *objp)
 			 return FALSE;
 		return TRUE;
 	} else if (xdrs->x_op == XDR_DECODE) {
+		 if (!xdr_int (xdrs, &objp->idCliente))
+			 return FALSE;
 		 if (!xdr_vector (xdrs, (char *)objp->id_factura, MAXNOM,
 			sizeof (char), (xdrproc_t) xdr_char))
 			 return FALSE;
 		 if (!xdr_proxNodoHamburguesa (xdrs, &objp->listaHamburguesas))
+			 return FALSE;
+		 if (!xdr_proxNodoFactura (xdrs, &objp->nodoFacturaSiguiente))
 			 return FALSE;
 		buf = XDR_INLINE (xdrs, 3 * BYTES_PER_XDR_UNIT);
 		if (buf == NULL) {
@@ -150,10 +168,14 @@ xdr_nodo_factura (XDR *xdrs, nodo_factura *objp)
 	 return TRUE;
 	}
 
+	 if (!xdr_int (xdrs, &objp->idCliente))
+		 return FALSE;
 	 if (!xdr_vector (xdrs, (char *)objp->id_factura, MAXNOM,
 		sizeof (char), (xdrproc_t) xdr_char))
 		 return FALSE;
 	 if (!xdr_proxNodoHamburguesa (xdrs, &objp->listaHamburguesas))
+		 return FALSE;
+	 if (!xdr_proxNodoFactura (xdrs, &objp->nodoFacturaSiguiente))
 		 return FALSE;
 	 if (!xdr_int (xdrs, &objp->cantidadHamburguesasPequenias))
 		 return FALSE;

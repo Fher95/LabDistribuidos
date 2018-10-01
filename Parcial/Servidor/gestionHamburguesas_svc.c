@@ -21,9 +21,12 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
 		nodo_hamburguesa_factura comprarhamburguesasistema_1_arg;
+		char *obtenerhamburguesa_1_arg;
 		nodo_datos_hamburguesa_modificada modificarcompra_1_arg;
 		char *eliminarahamburguesa_1_arg;
+		int mostrarfactura_1_arg;
 		char pagarfactura_1_arg;
+		int listarhamburguesassistema_1_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -58,6 +61,12 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		local = (char *(*)(char *, struct svc_req *)) comprarhamburguesasistema_1_svc;
 		break;
 
+	case obtenerHamburguesa:
+		_xdr_argument = (xdrproc_t) xdr_wrapstring;
+		_xdr_result = (xdrproc_t) xdr_nodo_hamburguesa;
+		local = (char *(*)(char *, struct svc_req *)) obtenerhamburguesa_1_svc;
+		break;
+
 	case modificarCompra:
 		_xdr_argument = (xdrproc_t) xdr_nodo_datos_hamburguesa_modificada;
 		_xdr_result = (xdrproc_t) xdr_bool;
@@ -71,7 +80,7 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		break;
 
 	case mostrarFactura:
-		_xdr_argument = (xdrproc_t) xdr_void;
+		_xdr_argument = (xdrproc_t) xdr_int;
 		_xdr_result = (xdrproc_t) xdr_nodo_factura;
 		local = (char *(*)(char *, struct svc_req *)) mostrarfactura_1_svc;
 		break;
@@ -83,7 +92,7 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		break;
 
 	case listarHamburguesasSistema:
-		_xdr_argument = (xdrproc_t) xdr_void;
+		_xdr_argument = (xdrproc_t) xdr_int;
 		_xdr_result = (xdrproc_t) xdr_proxNodoHamburguesa;
 		local = (char *(*)(char *, struct svc_req *)) listarhamburguesassistema_1_svc;
 		break;
