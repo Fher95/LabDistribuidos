@@ -55,6 +55,10 @@ struct nodo_datos_hamburguesa_modificada{
 	char nombreAntiguo[MAXNOM];
 
 };
+struct nodo_pago{
+	nodo_factura varFactura;
+	char varTipoPago[20];
+};
 
 /*Definicion de las operaciones que se pueden realizar*/
 program gestion_hamburguesa{
@@ -67,7 +71,7 @@ program gestion_hamburguesa{
 		bool modificarCompra(nodo_datos_hamburguesa_modificada parHamburguesa)=6;
 		bool eliminaraHamburguesa(string nombreHamburguesa)=7;
 		nodo_factura mostrarFactura(int idCliente)=8;
-		bool pagarFactura(char tipoPago)=9;
+		bool pagarFactura(nodo_pago parPago)=9;
 		proxNodoHamburguesa listarHamburguesasSistema(int idCliente)=10;		
 	}=1;
 }=0x20000001;

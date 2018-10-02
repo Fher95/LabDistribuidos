@@ -205,17 +205,3 @@ xdr_nodo_datos_hamburguesa_modificada (XDR *xdrs, nodo_datos_hamburguesa_modific
 		 return FALSE;
 	return TRUE;
 }
-
-bool_t
-xdr_nodo_pago (XDR *xdrs, nodo_pago *objp)
-{
-	register int32_t *buf;
-
-	int i;
-	 if (!xdr_nodo_factura (xdrs, &objp->varFactura))
-		 return FALSE;
-	 if (!xdr_vector (xdrs, (char *)objp->varTipoPago, 20,
-		sizeof (char), (xdrproc_t) xdr_char))
-		 return FALSE;
-	return TRUE;
-}

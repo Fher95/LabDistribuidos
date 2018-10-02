@@ -5,6 +5,10 @@
  */
 #include <stdlib.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <string.h>
 #include "gestionHamburguesas.h"
 int idClientes=1;
 proxNodoHamburguesa cabeza = NULL, sigHamburguesa;
@@ -27,7 +31,7 @@ consultardatosempresa_1_svc(void *argp, struct svc_req *rqstp)
 	FILE *archivo;
 	char lineaLeida[100];
 	archivo = fopen("datosEmpresa.txt","r");
-	printf("\n Ejecutando Consulta de Precios. \n");
+	printf("\n Ejecutando Consulta de Informacion Empresa. \n");
 	if (archivo == NULL)
 	{
 		printf("Erro al abrir el archivo");
@@ -39,6 +43,8 @@ consultardatosempresa_1_svc(void *argp, struct svc_req *rqstp)
 			fgets(lineaLeida,100,archivo);
 			result.nit = atoi(lineaLeida);				
 	}
+	printf("	 Nombre Empresa: %s \n",result.nombre);
+	printf("	 Nombre Empresa: %i \n",result.nit);
 
 	return &result;
 }
@@ -75,31 +81,8 @@ nodo_costos_hamburguesa obtenerCostos(){
 nodo_costos_hamburguesa *
 consultarcostoshamburguesa_1_svc(void *argp, struct svc_req *rqstp)
 {
-	static nodo_costos_hamburguesa  result;
-
-	FILE *archivo;
-	char lineaLeida[100];
-	archivo = fopen("costoshamburguesa.txt","r");
-	printf("\n Ejecutando Consulta de Precios. \n");
-	if (archivo == NULL)
-	{
-		printf("Erro al abrir el archivo");
-	} 		
-	else
-	{
-			fgets(lineaLeida,100,archivo);
-
-
-			result.costoHamburguesaPequenia = atof(lineaLeida);
-			fgets(lineaLeida,100,archivo);
-			result.costoHamburguesaMediana = atof(lineaLeida);
-			fgets(lineaLeida,100,archivo);
-			result.costoHamburguesaGrande = atof(lineaLeida);
-			fgets(lineaLeida,100,archivo);
-			result.costoIngredientesExtra = atof(lineaLeida);
-	
-	}
-
+	static nodo_costos_hamburguesa  result;	
+	result =obtenerCostos();
 	return &result;	
 }
 
@@ -334,13 +317,86 @@ mostrarfactura_1_svc(int *argp, struct svc_req *rqstp)
 }
 
 bool_t *
-pagarfactura_1_svc(char *argp, struct svc_req *rqstp)
+pagarfactura_1_svc(nodo_pago *argp, struct svc_req *rqstp)
 {
 	static bool_t  result;
+	//Creacion de la carpeta Facturas
+	DIR * dir;
+	dir = opendir("Facturas");
+	if(dir == NULL){
+		int n = mkdir("Facturas", 0777);
+		if (n == -1){
+			printf("No se creo el directorio!");
+			exit(EXIT_FAILURE);
+		}
+		closedir(dir);
+	}
 
-	/*
-	 * insert server code here
-	 */
+	//Creacion del archivo pagos
+	FILE *archivoPagos;
+	archivoPagos = fopen("Facturas/PagosFacturas.txt","a");
+	char montoPago[30];
+	sprintf(montoPago,"%f",(*argp).varFactura.costo_total);
+	fputs(montoPago,archivoPagos); fputs("\n",archivoPagos);
+	fclose(archivoPagos);
+
+	//Creando el archivo para la factura en particular
+
+	FILE *archivoFactura;
+	char nombreArchivo[30];
+	strcpy(nombreArchivo,(*argp).varFactura.id_factura); strcat(nombreArchivo,".txt");
+	char ruta[50]="Facturas/";
+	strcat(ruta,nombreArchivo);
+	archivoFactura = fopen(ruta,"w");
+
+	fputs("Metodo de Pago: ",archivoFactura); fputs((*argp).varTipoPago,archivoFactura);fputs("\n",archivoFactura);
+	
+	fputs("Costo Total: ",archivoFactura); fputs(montoPago,archivoFactura);fputs("\n",archivoFactura);
+
+	char costoIva[30];
+	sprintf(costoIva,"%f",(*argp).varFactura.costoIva);
+	fputs("Costo Iva: ",archivoFactura); fputs(costoIva,archivoFactura);fputs("\n",archivoFactura);
+
+	char costoSinIva[30];
+	sprintf(costoSinIva,"%f",(*argp).varFactura.costoSinIva);
+	fputs("Costo Sin Iva: ",archivoFactura); fputs(costoSinIva,archivoFactura);fputs("\n",archivoFactura);
+
+	char hamburguesasPequenias[30];
+	sprintf(hamburguesasPequenias,"%i",(*argp).varFactura.cantidadHamburguesasPequenias);
+	fputs("Num Hamburuguesas Pequeñas: ",archivoFactura); fputs(hamburguesasPequenias,archivoFactura);fputs("\n",archivoFactura);
+
+	char hamburguesasMedianas[30];	
+	sprintf(hamburguesasMedianas,"%i",(*argp).varFactura.cantidadHamburguesasMedianas);
+	fputs("Num Hamburuguesas Medianas: ",archivoFactura); fputs(hamburguesasMedianas,archivoFactura);fputs("\n",archivoFactura);
+
+	char hamburguesasGrandes[30];	
+	sprintf(hamburguesasGrandes,"%i",(*argp).varFactura.cantidadHamburguesasGrandes);
+	fputs("Num Hamburuguesas Grandes: ",archivoFactura); fputs(hamburguesasGrandes,archivoFactura);fputs("\n",archivoFactura);
+
+	proxNodoHamburguesa * hamburguesaActual;
+
+
+	fputs("Lista Hamburguesas:",archivoFactura); fputs("\n",archivoFactura);
+	hamburguesaActual = &(*argp).varFactura.listaHamburguesas;
+	while (*(hamburguesaActual)!=NULL){
+			
+		fputs("-----------------------------------------",archivoFactura); fputs("\n",archivoFactura);
+		fputs("	Nombre: ",archivoFactura);fputs((*hamburguesaActual)->nombre,archivoFactura); fputs("\n",archivoFactura);
+		fputs("	Tipo: ",archivoFactura);fputs((*hamburguesaActual)->tipo,archivoFactura); fputs("\n",archivoFactura);
+		
+		char cantIngrediente[10];
+		sprintf(cantIngrediente,"%i",(*hamburguesaActual)->cantidadIngredientesExtra);
+		fputs("	Ingredientes Extra: ",archivoFactura);fputs(cantIngrediente,archivoFactura); fputs("\n",archivoFactura);
+
+		char costoHam[10];
+		sprintf(costoHam,"%f",(*hamburguesaActual)->costo);
+		fputs("	Costo: ",archivoFactura);fputs(costoHam,archivoFactura); fputs("\n",archivoFactura);
+		fputs("-----------------------------------------",archivoFactura); fputs("\n",archivoFactura);
+
+		(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;	
+	}
+
+	fclose(archivoFactura);
 
 	return &result;
 }

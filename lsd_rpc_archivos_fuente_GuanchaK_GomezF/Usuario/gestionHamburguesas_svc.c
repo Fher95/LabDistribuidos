@@ -25,7 +25,7 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		nodo_datos_hamburguesa_modificada modificarcompra_1_arg;
 		char *eliminarahamburguesa_1_arg;
 		int mostrarfactura_1_arg;
-		nodo_pago pagarfactura_1_arg;
+		char pagarfactura_1_arg;
 		int listarhamburguesassistema_1_arg;
 	} argument;
 	char *result;
@@ -86,7 +86,7 @@ gestion_hamburguesa_1(struct svc_req *rqstp, register SVCXPRT *transp)
 		break;
 
 	case pagarFactura:
-		_xdr_argument = (xdrproc_t) xdr_nodo_pago;
+		_xdr_argument = (xdrproc_t) xdr_char;
 		_xdr_result = (xdrproc_t) xdr_bool;
 		local = (char *(*)(char *, struct svc_req *)) pagarfactura_1_svc;
 		break;

@@ -72,12 +72,6 @@ struct nodo_datos_hamburguesa_modificada {
 };
 typedef struct nodo_datos_hamburguesa_modificada nodo_datos_hamburguesa_modificada;
 
-struct nodo_pago {
-	nodo_factura varFactura;
-	char varTipoPago[20];
-};
-typedef struct nodo_pago nodo_pago;
-
 #define gestion_hamburguesa 0x20000001
 #define gestion_hamburguesa_version 1
 
@@ -107,8 +101,8 @@ extern  bool_t * eliminarahamburguesa_1_svc(char **, struct svc_req *);
 extern  nodo_factura * mostrarfactura_1(int *, CLIENT *);
 extern  nodo_factura * mostrarfactura_1_svc(int *, struct svc_req *);
 #define pagarFactura 9
-extern  bool_t * pagarfactura_1(nodo_pago *, CLIENT *);
-extern  bool_t * pagarfactura_1_svc(nodo_pago *, struct svc_req *);
+extern  bool_t * pagarfactura_1(char *, CLIENT *);
+extern  bool_t * pagarfactura_1_svc(char *, struct svc_req *);
 #define listarHamburguesasSistema 10
 extern  proxNodoHamburguesa * listarhamburguesassistema_1(int *, CLIENT *);
 extern  proxNodoHamburguesa * listarhamburguesassistema_1_svc(int *, struct svc_req *);
@@ -159,7 +153,6 @@ extern  bool_t xdr_nodo_datos_empresa (XDR *, nodo_datos_empresa*);
 extern  bool_t xdr_nodo_costos_hamburguesa (XDR *, nodo_costos_hamburguesa*);
 extern  bool_t xdr_nodo_factura (XDR *, nodo_factura*);
 extern  bool_t xdr_nodo_datos_hamburguesa_modificada (XDR *, nodo_datos_hamburguesa_modificada*);
-extern  bool_t xdr_nodo_pago (XDR *, nodo_pago*);
 
 #else /* K&R C */
 extern bool_t xdr_proxNodoHamburguesa ();
@@ -170,7 +163,6 @@ extern bool_t xdr_nodo_datos_empresa ();
 extern bool_t xdr_nodo_costos_hamburguesa ();
 extern bool_t xdr_nodo_factura ();
 extern bool_t xdr_nodo_datos_hamburguesa_modificada ();
-extern bool_t xdr_nodo_pago ();
 
 #endif /* K&R C */
 

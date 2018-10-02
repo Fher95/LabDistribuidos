@@ -130,13 +130,13 @@ mostrarfactura_1(int *argp, CLIENT *clnt)
 }
 
 bool_t *
-pagarfactura_1(nodo_pago *argp, CLIENT *clnt)
+pagarfactura_1(char *argp, CLIENT *clnt)
 {
 	static bool_t clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, pagarFactura,
-		(xdrproc_t) xdr_nodo_pago, (caddr_t) argp,
+		(xdrproc_t) xdr_char, (caddr_t) argp,
 		(xdrproc_t) xdr_bool, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
