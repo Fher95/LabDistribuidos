@@ -19,7 +19,8 @@ char varCapcha[10];
 int *
 getidentificador_1_svc(void *argp, struct svc_req *rqstp)
 {
-	static int  result;	
+	static int  result;
+	printf("\n ********Generando Nuevo Codigo De Usuario*********");	
 	result=idClientes;
 	idClientes++;
 	return &result;
@@ -29,11 +30,10 @@ nodo_datos_empresa *
 consultardatosempresa_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static nodo_datos_empresa  result;
-
+	printf("\n ********Ejecutando Consulta Datos Empresa*********");
 	FILE *archivo;
 	char lineaLeida[100];
 	archivo = fopen("datosEmpresa.txt","r");
-	printf("\n Ejecutando Consulta de Informacion Empresa. \n");
 	if (archivo == NULL)
 	{
 		printf("Erro al abrir el archivo");
@@ -47,7 +47,7 @@ consultardatosempresa_1_svc(void *argp, struct svc_req *rqstp)
 	}
 	fclose(archivo);
 	printf("	 Nombre Empresa: %s \n",result.nombre);
-	printf("	 Nombre Empresa: %i \n",result.nit);
+	printf("	 Nit Empresa: %i \n",result.nit);
 
 	return &result;
 }
@@ -58,7 +58,7 @@ nodo_costos_hamburguesa obtenerCostos(){
 	FILE *archivo;
 	char lineaLeida[100];
 	archivo = fopen("costoshamburguesa.txt","r");
-	printf("\n Ejecutando Consulta de Precios. \n");
+	//printf("\n Ejecutando Consulta de Precios. \n");
 	if (archivo == NULL)
 	{
 		printf("Erro al abrir el archivo");
@@ -78,10 +78,10 @@ nodo_costos_hamburguesa obtenerCostos(){
 	
 	}
 	fclose(archivo);
-	printf("\n Hamburguesa Pequeña: %f \n",result.costoHamburguesaPequenia);
+	/*printf("\n Hamburguesa Pequeña: %f \n",result.costoHamburguesaPequenia);
 	printf("\n Hamburguesa Mediana: %f \n",result.costoHamburguesaMediana);
 	printf("\n Hamburguesa Grande: %f \n",result.costoHamburguesaGrande);
-	printf("\n Ingredientes Extra: %f \n",result.costoIngredientesExtra);
+	printf("\n Ingredientes Extra: %f \n",result.costoIngredientesExtra);*/
 
 	return result;
 }
@@ -90,6 +90,7 @@ nodo_costos_hamburguesa *
 consultarcostoshamburguesa_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static nodo_costos_hamburguesa  result;	
+	printf("\n ********Ejecutando Consulta de Precios*********");
 	result =obtenerCostos();
 	return &result;	
 }
@@ -97,8 +98,8 @@ consultarcostoshamburguesa_1_svc(void *argp, struct svc_req *rqstp)
 float calcularCostoHamburguesa(char *tipo, int cantIngredientes){
 	float result = 0;
 	float valor=0;
-	printf("\n CALCULANDO COSTO: ");
-	printf("\n Tipo recibido: %s \n",tipo);
+	//printf("\n CALCULANDO COSTO: ");
+	//printf("\n Tipo recibido: %s \n",tipo);
 	nodo_costos_hamburguesa costos = obtenerCostos();
 	if (strcmp(tipo,"Pequenia")==0){
 		valor = costos.costoHamburguesaPequenia;		
@@ -109,7 +110,7 @@ float calcularCostoHamburguesa(char *tipo, int cantIngredientes){
 	if (strcmp(tipo,"Grande")==0){
 		valor = costos.costoHamburguesaGrande;		
 	}
-	printf("\n Ingredientes Extra: %f \n",costos.costoIngredientesExtra);
+	//printf("\n Ingredientes Extra: %f \n",costos.costoIngredientesExtra);
 	float valExtra = costos.costoIngredientesExtra*cantIngredientes;
 	result = valor+valExtra;
 	return result;
@@ -137,11 +138,11 @@ comprarhamburguesasistema_1_svc(nodo_hamburguesa_factura *argp, struct svc_req *
 	result = FALSE;
 	if (hamburguesaRepetida((*argp).nombre)== FALSE){
 
-		printf("\n Ejecutando Compra de Hamburguesas. \n");
-		printf("	Id Cliente: %i \n", (*argp).idCliente);
+		printf("\n *****Ejecutando Compra de Hamburguesas***** \n");
+		/*printf("	Id Cliente: %i \n", (*argp).idCliente);
 		printf("	Nombre: %s \n", (*argp).nombre);
 		printf("	Cantidad Ingredientes: %d \n", (*argp).cantidadIngredientesExtra);
-		printf("	Tipo: %s \n", (*argp).tipo);
+		printf("	Tipo: %s \n", (*argp).tipo);*/
 
 		nuevaHamburguesa = (proxNodoHamburguesa) malloc (sizeof (nodo_hamburguesa_factura) );
 	
@@ -149,10 +150,10 @@ comprarhamburguesasistema_1_svc(nodo_hamburguesa_factura *argp, struct svc_req *
 		nuevaHamburguesa->cantidadIngredientesExtra = (*argp).cantidadIngredientesExtra;
 		nuevaHamburguesa->idCliente=(*argp).idCliente;
 		strcpy(nuevaHamburguesa->tipo,(*argp).tipo);
-		printf("	Tipo Nueva Hamb: %s \n", nuevaHamburguesa->tipo);
+
 		nuevaHamburguesa->costo = calcularCostoHamburguesa(nuevaHamburguesa->tipo,nuevaHamburguesa->cantidadIngredientesExtra);
-		printf("Ya se calculo el precio.");
-		printf("	Costo: %f \n", nuevaHamburguesa->costo);
+
+
 		if (cabeza==NULL)
 		{
 			cabeza = nuevaHamburguesa;
@@ -164,8 +165,7 @@ comprarhamburguesasistema_1_svc(nodo_hamburguesa_factura *argp, struct svc_req *
 			sigHamburguesa=nuevaHamburguesa;
 		}
 		sigHamburguesa->nodoSiguiente=NULL;
-		printf("	Nombre Cabeza: %s \n", cabeza->nombre);
-		printf("	Id Cliente Cabeza: %i \n", cabeza->idCliente);
+
 		result=TRUE;
 
 	}
@@ -177,18 +177,19 @@ nodo_hamburguesa *
 obtenerhamburguesa_1_svc(char **argp, struct svc_req *rqstp)
 {
 	static nodo_hamburguesa  result;
+	//printf("\nNombre de hamburguesa recibido:%s ", *argp);
+	proxNodoHamburguesa hamburguesaActual;
+	hamburguesaActual = cabeza;
+	while (hamburguesaActual!=NULL){
+		if (strcmp(hamburguesaActual->nombre,*argp)==0){
 
-	proxNodoHamburguesa * hamburguesaActual;
-	hamburguesaActual = &cabeza;
-	while (*(hamburguesaActual)!=NULL){
-		if (strcmp((*hamburguesaActual)->nombre,*argp)==0){
-			strcmp(result.nombre,(*hamburguesaActual)->nombre);
-			result.cantidadIngredientesExtra = (*hamburguesaActual)->cantidadIngredientesExtra;
-			strcmp(result.tipo,(*hamburguesaActual)->tipo);
-			result.idCliente = (*hamburguesaActual)->idCliente;
+			strcpy(result.nombre,hamburguesaActual->nombre);
+			result.cantidadIngredientesExtra = hamburguesaActual->cantidadIngredientesExtra;
+			strcpy(result.tipo,hamburguesaActual->tipo);
+			result.idCliente = hamburguesaActual->idCliente;
 			break;
 		}
-		(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;
+		hamburguesaActual=hamburguesaActual->nodoSiguiente;
 	}
 
 	return &result;
@@ -198,21 +199,21 @@ bool_t *
 modificarcompra_1_svc(nodo_datos_hamburguesa_modificada *argp, struct svc_req *rqstp)
 {
 	static bool_t  result;
-	char *varNom = (*argp).nombreAntiguo;
-	proxNodoHamburguesa *hamburguesaActual;
-	hamburguesaActual=&cabeza;
+	printf("\n ********Ejecutando Modificacion Hamburguesa*********");
+	proxNodoHamburguesa hamburguesaActual;
+	hamburguesaActual=cabeza;
 	result = FALSE;
-	while (*(hamburguesaActual)!=NULL){
-		if (strcmp((*hamburguesaActual)->nombre,varNom)==0){
-			strcpy((*hamburguesaActual)->nombre,(*argp).varHamburguesa.nombre);
-			(*hamburguesaActual)->cantidadIngredientesExtra = (*argp).varHamburguesa.cantidadIngredientesExtra;
-			strcpy((*hamburguesaActual)->tipo,(*argp).varHamburguesa.tipo);
-			(*hamburguesaActual)->costo = calcularCostoHamburguesa((*hamburguesaActual)->tipo,(*hamburguesaActual)->cantidadIngredientesExtra);
+	while (hamburguesaActual!=NULL){
+		if (strcmp(hamburguesaActual->nombre,(*argp).nombreAntiguo)==0){
+			strcpy(hamburguesaActual->nombre,(*argp).varHamburguesa.nombre);
+			hamburguesaActual->cantidadIngredientesExtra = (*argp).varHamburguesa.cantidadIngredientesExtra;
+			strcpy(hamburguesaActual->tipo,(*argp).varHamburguesa.tipo);
+			hamburguesaActual->costo = calcularCostoHamburguesa(hamburguesaActual->tipo,hamburguesaActual->cantidadIngredientesExtra);
 			result = TRUE;	
 			break;			
 		}
 		else {
-			(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;
+			hamburguesaActual=hamburguesaActual->nodoSiguiente;
 		}	
 	}
 
@@ -223,6 +224,7 @@ bool_t *
 eliminarahamburguesa_1_svc(char **argp, struct svc_req *rqstp)
 {
 	static bool_t  result;
+	printf("\n ********Ejecutando Eliminacion Hamburguesa*********");
 	proxNodoHamburguesa hamburguesaActual;
 	proxNodoHamburguesa nodoAnterior;
 	//Si el resultado es falso es porque seguramente no encontró la hamburguesa (?)
@@ -261,7 +263,7 @@ eliminarahamburguesa_1_svc(char **argp, struct svc_req *rqstp)
 
 proxNodoHamburguesa listarHamburguesasCliente(int parId){
 
-	printf("\n Id Recibido: %i \n",parId);
+	//printf("\n Id Recibido: %i \n",parId);
 
 	proxNodoHamburguesa nuevaCabeza = NULL, varSigHamburguesa;
 
@@ -296,7 +298,7 @@ proxNodoHamburguesa listarHamburguesasCliente(int parId){
 		}
 		hamburguesaActual=hamburguesaActual->nodoSiguiente;		
 	}
-	printf("Numero de hamburguesas listadas: %i",cont);
+	//printf("Numero de hamburguesas listadas: %i",cont);
 	return nuevaCabeza;
 	
 }
@@ -307,6 +309,7 @@ nodo_factura *
 mostrarfactura_1_svc(int *argp, struct svc_req *rqstp)
 {
 	static nodo_factura  result;
+	printf("\n ********Ejecutando Generacion de Factura*********");
 	int numGrandes=0, numMedianas=0, numPequenias=0;
 	float costoSinIva=0,iva=0,costoTotal=0;
 	result.listaHamburguesas = listarHamburguesasCliente(*argp);
@@ -358,6 +361,7 @@ bool_t *
 pagarfactura_1_svc(nodo_pago *argp, struct svc_req *rqstp)
 {
 	static bool_t  result;
+	printf("\n ********Ejecutando Pago de Factura*********");
 	//Creacion de la carpeta Facturas
 	DIR * dir;
 	dir = opendir("Facturas");
@@ -368,73 +372,77 @@ pagarfactura_1_svc(nodo_pago *argp, struct svc_req *rqstp)
 			exit(EXIT_FAILURE);
 		}
 		closedir(dir);
+		result = FALSE;
 	}
+	else{
 
-	//Creacion del archivo pagos
-	FILE *archivoPagos;
-	archivoPagos = fopen("Facturas/PagosFacturas.txt","a");
-	char montoPago[30];
-	sprintf(montoPago,"%f",(*argp).varFactura.costo_total);
-	fputs(montoPago,archivoPagos); fputs("\n",archivoPagos);
-	fclose(archivoPagos);
+		//Creacion del archivo pagos
+		FILE *archivoPagos;
+		archivoPagos = fopen("Facturas/PagosFacturas.txt","a");
+		char montoPago[30];
+		sprintf(montoPago,"%f",(*argp).varFactura.costo_total);
+		fputs(montoPago,archivoPagos); fputs("\n",archivoPagos);
+		fclose(archivoPagos);
 
-	//Creando el archivo para la factura en particular
+		//Creando el archivo para la factura en particular
 
-	FILE *archivoFactura;
-	char nombreArchivo[30];
-	strcpy(nombreArchivo,(*argp).varFactura.id_factura); strcat(nombreArchivo,".txt");
-	char ruta[50]="Facturas/";
-	strcat(ruta,nombreArchivo);
-	archivoFactura = fopen(ruta,"w");
+		FILE *archivoFactura;
+		char nombreArchivo[30];
+		strcpy(nombreArchivo,(*argp).varFactura.id_factura); strcat(nombreArchivo,".txt");
+		char ruta[50]="Facturas/";
+		strcat(ruta,nombreArchivo);
+		archivoFactura = fopen(ruta,"w");
 
-	fputs("Metodo de Pago: ",archivoFactura); fputs((*argp).varTipoPago,archivoFactura);fputs("\n",archivoFactura);
+		fputs("Metodo de Pago: ",archivoFactura); fputs((*argp).varTipoPago,archivoFactura);fputs("\n",archivoFactura);
 	
-	fputs("Costo Total: ",archivoFactura); fputs(montoPago,archivoFactura);fputs("\n",archivoFactura);
+		fputs("Costo Total: ",archivoFactura); fputs(montoPago,archivoFactura);fputs("\n",archivoFactura);
 
-	char costoIva[30];
-	sprintf(costoIva,"%f",(*argp).varFactura.costoIva);
-	fputs("Costo Iva: ",archivoFactura); fputs(costoIva,archivoFactura);fputs("\n",archivoFactura);
+		char costoIva[30];
+		sprintf(costoIva,"%f",(*argp).varFactura.costoIva);
+		fputs("Costo Iva: ",archivoFactura); fputs(costoIva,archivoFactura);fputs("\n",archivoFactura);
 
-	char costoSinIva[30];
-	sprintf(costoSinIva,"%f",(*argp).varFactura.costoSinIva);
-	fputs("Costo Sin Iva: ",archivoFactura); fputs(costoSinIva,archivoFactura);fputs("\n",archivoFactura);
+		char costoSinIva[30];
+		sprintf(costoSinIva,"%f",(*argp).varFactura.costoSinIva);
+		fputs("Costo Sin Iva: ",archivoFactura); fputs(costoSinIva,archivoFactura);fputs("\n",archivoFactura);
 
-	char hamburguesasPequenias[30];
-	sprintf(hamburguesasPequenias,"%i",(*argp).varFactura.cantidadHamburguesasPequenias);
-	fputs("Num Hamburuguesas Pequeñas: ",archivoFactura); fputs(hamburguesasPequenias,archivoFactura);fputs("\n",archivoFactura);
+		char hamburguesasPequenias[30];
+		sprintf(hamburguesasPequenias,"%i",(*argp).varFactura.cantidadHamburguesasPequenias);
+		fputs("Num Hamburuguesas Pequeñas: ",archivoFactura); fputs(hamburguesasPequenias,archivoFactura);fputs("\n",archivoFactura);
 
-	char hamburguesasMedianas[30];	
-	sprintf(hamburguesasMedianas,"%i",(*argp).varFactura.cantidadHamburguesasMedianas);
-	fputs("Num Hamburuguesas Medianas: ",archivoFactura); fputs(hamburguesasMedianas,archivoFactura);fputs("\n",archivoFactura);
+		char hamburguesasMedianas[30];	
+		sprintf(hamburguesasMedianas,"%i",(*argp).varFactura.cantidadHamburguesasMedianas);
+		fputs("Num Hamburuguesas Medianas: ",archivoFactura); fputs(hamburguesasMedianas,archivoFactura);fputs("\n",archivoFactura);
 
-	char hamburguesasGrandes[30];	
-	sprintf(hamburguesasGrandes,"%i",(*argp).varFactura.cantidadHamburguesasGrandes);
-	fputs("Num Hamburuguesas Grandes: ",archivoFactura); fputs(hamburguesasGrandes,archivoFactura);fputs("\n",archivoFactura);
+		char hamburguesasGrandes[30];	
+		sprintf(hamburguesasGrandes,"%i",(*argp).varFactura.cantidadHamburguesasGrandes);
+		fputs("Num Hamburuguesas Grandes: ",archivoFactura); fputs(hamburguesasGrandes,archivoFactura);fputs("\n",archivoFactura);
 
-	proxNodoHamburguesa * hamburguesaActual;
+		proxNodoHamburguesa * hamburguesaActual;
 
 
-	fputs("Lista Hamburguesas:",archivoFactura); fputs("\n",archivoFactura);
-	hamburguesaActual = &(*argp).varFactura.listaHamburguesas;
-	while (*(hamburguesaActual)!=NULL){
+		fputs("Lista Hamburguesas:",archivoFactura); fputs("\n",archivoFactura);
+		hamburguesaActual = &(*argp).varFactura.listaHamburguesas;
+		while (*(hamburguesaActual)!=NULL){
 			
-		fputs("-----------------------------------------",archivoFactura); fputs("\n",archivoFactura);
-		fputs("	Nombre: ",archivoFactura);fputs((*hamburguesaActual)->nombre,archivoFactura); fputs("\n",archivoFactura);
-		fputs("	Tipo: ",archivoFactura);fputs((*hamburguesaActual)->tipo,archivoFactura); fputs("\n",archivoFactura);
+			fputs("-----------------------------------------",archivoFactura); fputs("\n",archivoFactura);
+			fputs("	Nombre: ",archivoFactura);fputs((*hamburguesaActual)->nombre,archivoFactura); fputs("\n",archivoFactura);
+			fputs("	Tipo: ",archivoFactura);fputs((*hamburguesaActual)->tipo,archivoFactura); fputs("\n",archivoFactura);
 		
-		char cantIngrediente[10];
-		sprintf(cantIngrediente,"%i",(*hamburguesaActual)->cantidadIngredientesExtra);
-		fputs("	Ingredientes Extra: ",archivoFactura);fputs(cantIngrediente,archivoFactura); fputs("\n",archivoFactura);
+			char cantIngrediente[10];
+			sprintf(cantIngrediente,"%i",(*hamburguesaActual)->cantidadIngredientesExtra);
+			fputs("	Ingredientes Extra: ",archivoFactura);fputs(cantIngrediente,archivoFactura); fputs("\n",archivoFactura);
 
-		char costoHam[10];
-		sprintf(costoHam,"%f",(*hamburguesaActual)->costo);
-		fputs("	Costo: ",archivoFactura);fputs(costoHam,archivoFactura); fputs("\n",archivoFactura);
-		fputs("-----------------------------------------",archivoFactura); fputs("\n",archivoFactura);
+			char costoHam[10];
+			sprintf(costoHam,"%f",(*hamburguesaActual)->costo);
+			fputs("	Costo: ",archivoFactura);fputs(costoHam,archivoFactura); fputs("\n",archivoFactura);
+			fputs("-----------------------------------------",archivoFactura); fputs("\n",archivoFactura);
 
-		(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;	
+			(*hamburguesaActual)=(*hamburguesaActual)->nodoSiguiente;	
+		}
+
+		fclose(archivoFactura);
+		result = TRUE;
 	}
-
-	fclose(archivoFactura);
 
 	return &result;
 }
@@ -442,9 +450,8 @@ pagarfactura_1_svc(nodo_pago *argp, struct svc_req *rqstp)
 proxNodoHamburguesa *
 listarhamburguesassistema_1_svc(int *argp, struct svc_req *rqstp)
 {
-	printf("\n  Listando Hamburguesas:\n");
 	static proxNodoHamburguesa  result;
-
+	printf("\n ********Ejecutando Lista De Hamburguesas Compradas*********");
 	result = listarHamburguesasCliente(*argp);
 
 	return &result;

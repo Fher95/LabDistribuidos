@@ -1,0 +1,26 @@
+Metodo de Pago: En Linea
+Costo Total: 28350.000000
+Costo Iva: 1350.000000
+Costo Sin Iva: 27000.000000
+Num Hamburuguesas Pequeñas: 1
+Num Hamburuguesas Medianas: 1
+Num Hamburuguesas Grandes: 1
+Lista Hamburguesas:
+-----------------------------------------
+	Nombre: HOLA
+	Tipo: Pequenia
+	Ingredientes Extra: 1
+	Costo: 6000.000000
+-----------------------------------------
+-----------------------------------------
+	Nombre: QUE
+	Tipo: Grande
+	Ingredientes Extra: 3
+	Costo: 13000.000000
+-----------------------------------------
+-----------------------------------------
+	Nombre: HACE
+	Tipo: Mediana
+	Ingredientes Extra: 1
+	Costo: 8000.000000
+-----------------------------------------
